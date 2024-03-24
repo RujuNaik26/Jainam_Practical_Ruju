@@ -1,0 +1,326 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";  
+    ViewData["Title"] = "Employee List";
+    var CurrentUser = ViewBag.UserName;
+}
+<style>
+    .logout_btn {
+        color: black;
+        background-color: #FFC312;
+        width: 100px;
+    }
+    .logout_btn:hover , .logout_btn:active {
+        color: black;
+        background-color: #FFC312;
+    }
+    .table-responsive {
+        min-height: .01%;
+        overflow-x: auto;
+        width:auto !important;
+    }
+    table.table-condensed.table-striped {
+        border-collapse: collapse;
+        width: 1200px;
+        display: block;
+    }
+    .table-condensed.table-striped thead, .table-condensed.table-striped tbody {
+        display: block;
+    }
+    .table-condensed.table-striped tbody {
+        overflow-y: scroll;
+        overflow-x: hidden;
+        height: 420px;
+    }
+    .table>thead>tr>th {
+        vertical-align: bottom;
+        border-bottom: 2px solid transparent;
+    }
+    .table-condensed.table-striped td, .table-condensed.table-striped th {
+        min-width: 150px;
+        height: 25px;
+        overflow:hidden;
+        text-overflow: ellipsis;
+        max-width: 150px;
+    } 
+    .tablehead {
+        background-color: #5e5e60;
+        color: #fff;
+    }
+    .table-condensed>thead.tablehead>tr>th {
+        padding: 20px 10px 20px 20px;
+        font-weight: 400;
+        font-size: 14px;
+    }
+    .table-condensed>tbody.tablebody>tr>td {
+        padding: 15px 10px 15px 20px;
+        font-weight: 400;
+        font-size: 14px;
+        color: #4d4d4f;
+    }
+    .table-striped>tbody>tr:nth-of-type(even) {
+        background-color: #e4e4e5;
+        min-width: 100%;
+        display: inline-block;
+        border-bottom: 2px solid #fff;
+    }
+    .table-striped>tbody>tr:nth-of-type(odd) {
+        background-color: #f6f6f6;
+        min-width: 100%;
+        display: inline-block;
+        border-bottom: 2px solid #fff;
+    }
+    /* width */
+    ::-webkit-scrollbar {
+         width: 8px;
+         height:8px;
+    }
+    /* Track */
+    ::-webkit-scrollbar-track {
+         background: #f1f1f1;
+    }
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+        background: #888;
+    }
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+</style>
+<div class="col-md-12 p-5 border">
+    <div class="row form-group p-3 justify-content-between">
+        <h3 class="text-left">Employee List</h3>
+        <div>
+            <label>Hello, <strong>@CurrentUser</strong></label>
+             <a class="btn btn-outline-default logout_btn" href="/Home/Index">LogOut</a>
+        </div>
+    </div>
+    <div class="row form-group d-flex justify-content-between p-2 mt-2 border">
+        <div class="col-md-4"><input class="form-control-file" id="fileValue" type="file" accept=".csv" name="postedFile"/></div>
+        <div class="col-md-4"><input class="btn btn-outline-primary" type="button" id="importFile" value="Import"/></div>
+        <div class="col-md-4"></div>
+    </div>
+    <div class="row form-group table-responsive">
+        <table id="employeeTable" class="table table-hover table-condensed table-striped table-bordered">
+            <thead class="tablehead">
+                <tr>
+                    <th>Employee Id</th>
+                    <th>Employee Name</th>
+                    <th>Department</th>
+                    <th>Employee Email</th>
+                    <th>Job Title</th>
+                    <th>Phone Number</th>
+                    <th>Action</th>
+                    <th>Updated By</th>
+                </tr>
+            </thead>
+            <tbody id="employeeTbody" class="table-container tablebody"></tbody>
+        </table>
+        <div class="modal fade" id="editEmployeeModal" tabindex="-1" role="dialog" aria-labelledby="editEmployeeModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editEmployeeModalLabel">Edit Employee</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editEmployeeForm">
+                            <input type="hidden" id="hdnId"/>
+                            <div class="form-group">
+                                <label for="editEmployeeName">Name</label>
+                                <input type="text" class="form-control" id="editEmployeeName" name="editEmployeeName">
+                            </div>
+                            <div class="form-group">
+                                <label for="editEmployeeDepartment">Department</label>
+                                <input type="text" class="form-control" id="editEmployeeDepartment" name="editEmployeeDepartment">
+                            </div>
+                            <div class="form-group">
+                                <label for="editEmployeeId">EmployeeId</label>
+                                <input type="text" class="form-control" id="editEmployeeId" name="editEmployeeId">
+                            </div>
+                            <div class="form-group">
+                                <label for="editEmployeeEmail">EmployeeEmail</label>
+                                <input type="text" class="form-control" id="editEmployeeEmail" name="editEmployeeEmail">
+                            </div>
+                            <div class="form-group">
+                                <label for="editEmployeeJobTitle">Job Title</label>
+                                <input type="text" class="form-control" id="editEmployeeJobTitle" name="editEmployeeJobTitle">
+                            </div>
+                            <div class="form-group">
+                                <label for="editEmployeePhoneNumber">Phone Number</label>
+                                <input type="text" class="form-control" id="editEmployeePhoneNumber" name="editEmployeePhoneNumber">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="updateEmployee()">Update changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    
+<script type="text/javascript">
+    $(document).ready(function () {
+        getEmployeeDetails();
+        $('#importFile').on('click',function(){
+            var fileInput = document.getElementById('fileValue');
+            var file = fileInput.files[0];
+            if(file){
+                var fileName =  file.name;
+                if(fileName.endsWith('.csv')){
+                    var formData = new FormData();
+                    formData.append('postedFile',file);
+                    $.ajax({
+                        url:'/Home/ImportData',
+                        type:'POST',
+                        data:formData,
+                        processData:false,
+                        contentType:false,
+                        success:function(response){
+                            if(response){
+                                toastr.success('CSV Files Imported Successfully!!');
+                                $('#fileValue').val('');
+                                getEmployeeDetails();
+                            }
+                        },
+                        error:function(xhr,status,error){
+                            toastr.error(xhr.responseText);
+                        }
+                    });
+                }
+                else
+                {
+                    toastr.error('Please Select .csv File');
+                }
+            }
+            else{
+                toastr.error('Please Select a file');
+            }
+        });
+    });
+        
+    function getEmployeeDetails(){
+        $.ajax({
+            url: '/Home/GetEmployeeDetails',
+            type: 'GET', 
+            dataType: 'json', 
+            success: function(response) {
+                $("#employeeTbody").empty();
+                if(response!=null && response[0].isSuccess){
+                    var employeeList = response[0].empoyeeModel;
+
+                    $.each(employeeList, function(index, employee) {
+                        var row = '<tr>' +
+                            '<td>' + employee.employeeId + '</td>' +
+                            '<td>' + employee.employeeName + '</td>' +
+                            '<td>' + employee.department + '</td>' +
+                            '<td>' + employee.employeeEmail + '</td>' +
+                            '<td>' + employee.jobTitle + '</td>' +
+                            '<td>' + employee.phoneNumber + '</td>' +
+                            '<td>' +
+                            '<a onclick="editEmployee('+employee.id+')" class="btn btn-outline-primary">Edit</a> | ' +
+                            '<a onclick="deleteEmployee('+employee.id+')" class="btn btn-outline-danger">Delete</a>' +
+                            '</td>' +
+                            '<td>' + (employee.updatedBy!=null?employee.updatedBy:"") + '</td>' +
+                            '</tr>';
+                        $('#employeeTbody').append(row);
+                    });
+                }
+                else 
+                {
+                    var noDataRow = '<tr style="display:table;"><td class="text-center border-0">No Records Found!!</td></tr>';
+                    $('#employeeTbody').append(noDataRow);
+                }
+            },
+            error: function(xhr, status, error) {
+                toastr.error(xhr.responseText);
+            }
+        });
+    }
+        
+    function editEmployee(employeeId){
+        $.ajax({
+            url: '/Home/EditEmployee',
+            type: 'GET', 
+            dataType: 'json', 
+            data: { employeeId: employeeId }, 
+            success: function(response) {
+                if(response!=null && response.isSuccess){
+                    var editEmployeeData = response?.empoyeeModel;
+                    $("#editEmployeeModal").find("#hdnId").val(editEmployeeData[0]?.id);
+                    $("#editEmployeeModal").find("#editEmployeeName").val(editEmployeeData[0]?.employeeName);
+                    $("#editEmployeeModal").find("#editEmployeeDepartment").val(editEmployeeData[0]?.department);
+                    $("#editEmployeeModal").find("#editEmployeeEmail").val(editEmployeeData[0]?.employeeEmail);
+                    $("#editEmployeeModal").find("#editEmployeeJobTitle").val(editEmployeeData[0]?.jobTitle);
+                    $("#editEmployeeModal").find("#editEmployeePhoneNumber").val(editEmployeeData[0]?.phoneNumber);
+                    $("#editEmployeeModal").find("#editEmployeeId").val(editEmployeeData[0]?.employeeId);
+                    $("#editEmployeeModal").modal('show');
+                }
+            },
+            error: function(xhr, status, error) {
+                toastr.error(xhr.responseText);
+            }
+        });
+    }
+        
+    function deleteEmployee(employeeId){
+        Swal.fire({
+            title: 'Are you sure want to delete?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/Home/DeleteEmployee',
+                    type: 'GET', 
+                    dataType: 'json', 
+                    data: { employeeId: employeeId }, 
+                    success: function(response) {
+                        toastr.success("Employee Deleted Successfully!!");
+                        getEmployeeDetails();
+                    },
+                    error: function(xhr, status, error) {
+                        toastr.error(xhr.responseText);
+                    }
+                });
+            }
+        });
+    };
+
+    function updateEmployee(){
+        var employeeDetail = {
+            id :$("#editEmployeeModal").find("#hdnId").val(),
+            employeeName:$("#editEmployeeModal").find("#editEmployeeName").val(),
+            department:$("#editEmployeeModal").find("#editEmployeeDepartment").val(),
+            employeeId:$("#editEmployeeModal").find("#editEmployeeId").val(),
+            employeeEmail:$("#editEmployeeModal").find("#editEmployeeEmail").val(),
+            jobTitle:$("#editEmployeeModal").find("#editEmployeeJobTitle").val(),
+            phoneNumber:$("#editEmployeeModal").find("#editEmployeePhoneNumber").val()
+        }
+        $.ajax({
+            url: '/Home/UpdateEmployee',
+            type: 'POST', 
+            contentType: 'application/json',
+            data: JSON.stringify(employeeDetail), 
+            success: function(response) {
+                if(response=="success"){
+                    $("#editEmployeeModal").modal('hide');
+                    toastr.success("Employee Details Updated Successfully!!");
+                    getEmployeeDetails();
+                }
+            },
+            error: function(xhr, status, error) {
+                toastr.error(xhr.responseText);
+            }
+        });
+    }
+</script>

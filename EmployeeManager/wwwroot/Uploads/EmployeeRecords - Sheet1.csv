@@ -1,0 +1,11 @@
+EmployeeId,EmployeeName,Department,EmployeeEmail,JobTitle,PhoneNumber
+A-001,John Smith,Web,john@gmail.com,.Net Developer,9876543210
+A-002,Jane Doe,Mobile,jane@gmail.com,IOS Developer,9988776655
+A-012,Michael Johnson,QA,michael@gmail.com,Tester,9876543210
+A-020,James Clark,Admin,james@gmail.com,Admin executive,9988776655
+A-025,William Taylor,Production,william@gmail.com,Production,9898989898
+A-030,Melissa Harris,HR,melissa@gmail.com,HR Manager,9999999999
+A-033,Daniel Walker,Web,daniel@gmail.com,.Net Developer,8888888888
+A-050,Robert Wilson,QA,robert@gmail.com,Tester,7777777777
+A-010,Sarah Anderson,QA,sarah@gmail.com,Tester,6666666666
+A-222,Emily Davis,Mobile,emily@gmail.com,Android Developer,5555555
